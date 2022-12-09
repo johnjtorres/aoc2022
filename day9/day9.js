@@ -22,7 +22,7 @@ function move(m) {
 
   for (let i = 0; i < Math.abs(mag); i++) {
     // Return if move is invalid
-    if (!isValidMove(dir, mag)) return;
+    if (!isValidMove(hPos, dir, mag)) return;
 
     // Move head
     mag > 0 ? hPos[dir]++ : hPos[dir]--;
@@ -51,8 +51,8 @@ function isValidMove(pos, dir, mag) {
   return newPos >= 0 && newPos < max;
 }
 
-function isTailAdjacent() {
-  return Math.abs(tPos[0] - hPos[0]) <= 1 && Math.abs(tPos[1] - hPos[1]) <= 1;
+function isTailAdjacent(pos1, pos2) {
+  return Math.abs(pos1[0] - pos2[0]) <= 1 && Math.abs(pos1[1] - pos2[1]) <= 1;
 }
 
 function addTailMove() {
@@ -77,4 +77,5 @@ function part1(moves) {
 
 module.exports = {
   isValidMove,
+  isTailAdjacent,
 };
