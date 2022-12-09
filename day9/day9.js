@@ -20,12 +20,12 @@ tVisited.add(tPos.join(''));
 function move(m) {
   let [dir, mag] = parseMove(m);
 
-  for (let i = 0; i < mag; i++) {
-    // Check if valid move, return if not.
+  for (let i = 0; i < Math.abs(mag); i++) {
+    // Return if move is invalid
     if (!isValidMove(dir, mag)) return;
 
     // Move head
-    hPos[dir] += mag;
+    mag > 0 ? hPos[dir]++ : hPos[dir]--;
 
     // If tail is adjacent, do not move tail.
     if (isTailAdjacent()) continue;
@@ -44,9 +44,11 @@ function parseMove(m) {
   ];
 }
 
-function isValidMove(dir, mag) {
-  const max = dir === 1 ? 5 : 4;
-  return 0 <= hPos[dir] + mag <= max;
+function isValidMove(pos, dir, mag) {
+  const max = dir === 1 ? 6 : 5; // Bridge is 6 wide and 5 tall
+  console.log(pos);
+  const newPos = pos[dir] + mag / Math.abs(mag);
+  return newPos >= 0 && newPos < max;
 }
 
 function isTailAdjacent() {
@@ -57,9 +59,22 @@ function addTailMove() {
   tVisited.add(tPos.join(''));
 }
 
+function moveTail() {
+  // Diagonal
+  if (hPos[0] !== tPos[0] && hPos[1] !== tPos[1]) {
+  }
+
+  // Horizontal
+  // Vertical
+}
+
 function part1(moves) {
   moves.forEach((m) => move(m));
   return Array.from(tVisited).length;
 }
 
-move(moves[0]);
+// move(moves[0]);
+
+module.exports = {
+  isValidMove,
+};
