@@ -12,26 +12,18 @@ function readInput(file) {
 
 const moves = readInput('/home/john/Repos/aoc2022/day9/input.txt').split('\n');
 
-const hPos = [4, 0];
-const tPos = [4, 0];
+const hPos = [0, 0];
+const tPos = [0, 0];
 const tVisited = new Set();
-tVisited.add(tPos.join(''));
+addTailMove();
 
 function move(m) {
   let [dir, mag] = parseMove(m);
 
   for (let i = 0; i < Math.abs(mag); i++) {
-    // Return if move is invalid
-    if (!isValidMove(hPos, dir, mag)) return;
-
-    // Move head
-    mag > 0 ? hPos[dir]++ : hPos[dir]--;
-
-    // If tail is adjacent, do not move tail.
-    if (isTailAdjacent()) continue;
-
-    // Move tail
-
+    moveKnot(hPos, dir, mag); // Move head
+    if (isTailAdjacent(hPos, tPos)) continue; // If tail is adjacent, do not move tail.
+    moveTail(hPos, tPos, dir, mag); // Move tail
     addTailMove();
   }
 }
@@ -40,15 +32,12 @@ function parseMove(m) {
   let [dir, mag] = m.split(' ');
   return [
     ['L', 'R'].includes(dir) ? 1 : 0,
-    ['L', 'U'].includes(mag) ? -mag : mag,
+    ['L', 'U'].includes(dir) ? -mag : mag,
   ];
 }
 
-function isValidMove(pos, dir, mag) {
-  const max = dir === 1 ? 6 : 5; // Bridge is 6 wide and 5 tall
-  console.log(pos);
-  const newPos = pos[dir] + mag / Math.abs(mag);
-  return newPos >= 0 && newPos < max;
+function moveKnot(knot, dir, mag) {
+  mag > 0 ? knot[dir]++ : knot[dir]--;
 }
 
 function isTailAdjacent(pos1, pos2) {
@@ -56,16 +45,18 @@ function isTailAdjacent(pos1, pos2) {
 }
 
 function addTailMove() {
-  tVisited.add(tPos.join(''));
+  tVisited.add(tPos.join(','));
 }
 
-function moveTail() {
-  // Diagonal
-  if (hPos[0] !== tPos[0] && hPos[1] !== tPos[1]) {
+function moveTail(head, tail, dir, mag) {
+  if (head[0] === tail[0] || head[1] === tail[1]) {
+    moveKnot(tail, dir, mag);
+  } else {
+    moveKnot(tail, dir, mag);
+    const secDir = Math.abs(dir - 1);
+    const secMag = head[secDir] > tail[secDir] ? 1 : -1;
+    moveKnot(tail, secDir, secMag);
   }
-
-  // Horizontal
-  // Vertical
 }
 
 function part1(moves) {
@@ -73,9 +64,10 @@ function part1(moves) {
   return Array.from(tVisited).length;
 }
 
-// move(moves[0]);
+console.log(part1(moves));
 
 module.exports = {
-  isValidMove,
   isTailAdjacent,
+  moveTail,
+  part1,
 };
